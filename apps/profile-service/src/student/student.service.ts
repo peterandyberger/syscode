@@ -1,40 +1,50 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { CreateStudentDto } from './dto/create_student.dto';
-import { StudentDto } from './dto/student.dto';
 import { UpdateStudentDto } from './dto/update_student.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { StudentEntity } from './student.entity';
 
 @Injectable()
 export class StudentService {
-  private readonly students = new Map<string, StudentDto>();
+  constructor(
+    @InjectRepository(StudentEntity)
+    private readonly studentRepository: Repository<StudentEntity>,
+  ) {}
 
-  list(): StudentDto[] {
-    return Array.from(this.students.values());
+  async list(): Promise<StudentEntity[]> {
+    return this.studentRepository.find();
   }
 
-  create(dto: CreateStudentDto): StudentDto {
-    const id = randomUUID();
-    const student: StudentDto = { id, name: dto.name, email: dto.email };
-    this.students.set(id, student);
-    return student;
+  async create(dto: CreateStudentDto): Promise<StudentEntity> {
+    const student = this.studentRepository.create({
+      id: randomUUID(),
+      name: dto.name,
+      email: dto.email,
+    });
+
+    return this.studentRepository.save(student);
   }
 
-  update(id: string, dto: UpdateStudentDto): StudentDto {
-    const existing = this.students.get(id);
-    if (!existing) throw new NotFoundException('Student not found');
+  async update(id: string, dto: UpdateStudentDto): Promise<StudentEntity> {
+    const student = await this.studentRepository.findOneBy({ id });
 
-    const updated: StudentDto = {
-      ...existing,
-      name: dto.name ?? existing.name,
-      email: dto.email ?? existing.email,
-    };
+    if (!student) {
+      throw new NotFoundException('Student not found');
+    }
 
-    this.students.set(id, updated);
-    return updated;
+    student.name = dto.name ?? student.name;
+    student.email = dto.email ?? student.email;
+
+    return this.studentRepository.save(student);
   }
 
-  remove(id: string): void {
-    const existed = this.students.delete(id);
-    if (!existed) throw new NotFoundException('Student not found');
+  async remove(id: string): Promise<void> {
+    const result = await this.studentRepository.delete(id);
+
+    if (result.affected === 0) {
+      throw new NotFoundException('Student not found');
+    }
   }
 }
