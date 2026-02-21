@@ -47,9 +47,7 @@ describe('Student API (e2e)', () => {
   });
 
   it('GET /students -> lists students', async () => {
-    const res = await request(app.getHttpServer())
-      .get('/students')
-      .expect(200);
+    const res = await request(app.getHttpServer()).get('/students').expect(200);
 
     expect(Array.isArray(res.body)).toBe(true);
   });
