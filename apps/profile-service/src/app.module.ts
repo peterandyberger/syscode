@@ -12,7 +12,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       password: 'syscode',
       database: 'syscode',
       autoLoadEntities: true,
-      synchronize: false,
+      synchronize: true,
     }),
     StudentModule,
   ],
