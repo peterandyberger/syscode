@@ -12,6 +12,20 @@ on:
 jobs:
   profile-service-tests:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: syscode
+          POSTGRES_PASSWORD: syscode
+          POSTGRES_DB: syscode
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U syscode -d syscode"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
 
     defaults:
       run:
@@ -24,7 +38,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
           cache: "npm"
 
       - name: Install dependencies
@@ -34,4 +48,11 @@ jobs:
         run: npm test
 
       - name: Run e2e tests
+        env:
+          DB_HOST: 127.0.0.1
+          DB_PORT: 5432
+          DB_USER: syscode
+          DB_PASS: syscode
+          DB_NAME: syscode
+          TYPEORM_SYNC: "true"
         run: npm run test:e2e

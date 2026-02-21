@@ -1,9 +1,17 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { CreateStudentDto } from './dto/create_student.dto';
-import { StudentDto } from './dto/student.dto';
 import { UpdateStudentDto } from './dto/update_student.dto';
 import { StudentService } from './student.service';
+import { StudentEntity } from './student.entity';
 
 @ApiTags('students')
 @Controller('students')
@@ -11,26 +19,22 @@ export class StudentController {
   constructor(private readonly studentService: StudentService) {}
 
   @Get()
-  @ApiOkResponse({ type: [StudentDto] })
-  list(): StudentDto[] {
+  async list(): Promise<StudentEntity[]> {
     return this.studentService.list();
   }
 
   @Post()
-  @ApiOkResponse({ type: StudentDto })
-  create(@Body() dto: CreateStudentDto): StudentDto {
+  async create(@Body() dto: CreateStudentDto) {
     return this.studentService.create(dto);
   }
 
   @Put(':id')
-  @ApiOkResponse({ type: StudentDto })
-  update(@Param('id') id: string, @Body() dto: UpdateStudentDto): StudentDto {
+  async update(@Param('id') id: string, @Body() dto: UpdateStudentDto) {
     return this.studentService.update(id, dto);
   }
 
   @Delete(':id')
-  @ApiOkResponse({ description: 'Deleted' })
-  remove(@Param('id') id: string): void {
+  async remove(@Param('id') id: string) {
     return this.studentService.remove(id);
   }
 }
