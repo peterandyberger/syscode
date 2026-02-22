@@ -1,0 +1,14 @@
+<h1>Students</h1>
+
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <input formControlName="name" placeholder="Name" data-testid="name"/>
+  <input formControlName="email" placeholder="Email" data-testid="email" />
+  <button type="submit" data-testid="create_button">Create</button>
+</form>
+
+<ul>
+  <li *ngFor="let s of students">
+    {{ s.name }} ({{ s.email }})
+    <button (click)="delete(s.id)" data-testid="delete_button">x</button>
+  </li>
+</ul>
