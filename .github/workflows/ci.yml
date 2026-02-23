@@ -41,6 +41,19 @@ jobs:
           node-version: "22"
           cache: "npm"
 
+      - name: Run Liquibase migrations
+        run: |
+          docker run --rm \
+          --network host \
+          -v "$GITHUB_WORKSPACE/apps/profile-service/liquibase:/workspace" \
+          liquibase/liquibase:4.24 \
+          --searchPath=/workspace \
+          --changeLogFile=changelog.xml \
+          --url=jdbc:postgresql://localhost:5432/syscode \
+          --username=syscode \
+          --password=syscode \
+          update
+
       - name: Install dependencies
         run: npm ci
 
@@ -48,6 +61,7 @@ jobs:
         run: npm test
 
       - name: Run e2e tests
+        working-directory: apps/profile-service
         env:
           DB_HOST: 127.0.0.1
           DB_PORT: 5432
