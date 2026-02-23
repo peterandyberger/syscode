@@ -65,4 +65,34 @@ describe('Student API (e2e)', () => {
     expect(res.body.id).toBe(created.body.id);
     expect(res.body).toHaveProperty('address');
   });
+
+  it('PUT /students/:id -> updates student', async () => {
+    const created = await request(app.getHttpServer())
+      .post('/students')
+      .send({ name: 'Peter', email: 'peter.update@example.com' })
+      .expect(201);
+
+    const updated = await request(app.getHttpServer())
+      .put(`/students/${created.body.id}`)
+      .send({ name: 'Peter Updated' })
+      .expect(200);
+
+    expect(updated.body.id).toBe(created.body.id);
+    expect(updated.body.name).toBe('Peter Updated');
+    expect(updated.body.email).toBe('peter.update@example.com');
+  });
+
+  it('DELETE /students/:id -> deletes student', async () => {
+    const created = await request(app.getHttpServer())
+      .post('/students')
+      .send({ name: 'Peter', email: 'peter.delete@example.com' })
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .delete(`/students/${created.body.id}`)
+      .expect(200);
+
+    // optional sanity: list still works (not asserting absence, just no error)
+    await request(app.getHttpServer()).get('/students').expect(200);
+  });
 });
