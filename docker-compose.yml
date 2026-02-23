@@ -16,5 +16,20 @@ services:
       timeout: 3s
       retries: 20
 
+  liquibase:
+    image: liquibase/liquibase:4.24
+    container_name: syscode_liquibase
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command:
+      - --url=jdbc:postgresql://postgres:5432/syscode
+      - --username=syscode
+      - --password=syscode
+      - --changeLogFile=/liquibase/changelog.xml
+      - update
+    volumes:
+      - ./apps/profile-service/liquibase:/liquibase
+
 volumes:
   syscode_pgdata:
