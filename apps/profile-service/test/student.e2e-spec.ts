@@ -51,4 +51,18 @@ describe('Student API (e2e)', () => {
 
     expect(Array.isArray(res.body)).toBe(true);
   });
+
+  it('GET /students/:id/with-address -> returns student with address field', async () => {
+    const created = await request(app.getHttpServer())
+      .post('/students')
+      .send({ name: 'Peter', email: 'peter.with.address@example.com' })
+      .expect(201);
+
+    const res = await request(app.getHttpServer())
+      .get(`/students/${created.body.id}/with-address`)
+      .expect(200);
+
+    expect(res.body.id).toBe(created.body.id);
+    expect(res.body).toHaveProperty('address');
+  });
 });
