@@ -54,5 +54,5 @@ jobs:
           DB_USER: syscode
           DB_PASS: syscode
           DB_NAME: syscode
-          TYPEORM_SYNC: "true"
+          TYPEORM_SYNC: "false"
         run: npm run test:e2e
