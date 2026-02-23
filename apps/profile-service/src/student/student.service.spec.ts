@@ -83,4 +83,17 @@ describe('StudentService', () => {
       NotFoundException,
     );
   });
+  it('update: missing student -> NotFound', async () => {
+    (repo.findOneBy as any).mockResolvedValue(null);
+
+    await expect(service.update('missing', { name: 'X' })).rejects.toThrow(
+      NotFoundException,
+    );
+  });
+
+  it('remove: missing student -> NotFound', async () => {
+    (repo.delete as any).mockResolvedValue({ affected: 0 });
+
+    await expect(service.remove('missing')).rejects.toThrow(NotFoundException);
+  });
 });
