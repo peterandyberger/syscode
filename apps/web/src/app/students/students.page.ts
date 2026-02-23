@@ -2,7 +2,6 @@ import { Component, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { email } from '@angular/forms/signals';
 
 type Student = { id: string; name: string; email: string };
 

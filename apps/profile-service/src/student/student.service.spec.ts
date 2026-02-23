@@ -65,15 +65,22 @@ describe('StudentService', () => {
   });
 
   it('should throw if updating non-existing student', async () => {
-    (repo.delete as jest.Mock).mockResolvedValue({ affected: 0 });
-    await expect(service.remove('missing-id')).rejects.toThrow(
-      NotFoundException,
-    );
+    (repo.findOneBy as jest.Mock).mockResolvedValue(null);
+    await expect(
+      service.update('non-existing-id', { name: 'X' } as any),
+    ).rejects.toThrow(NotFoundException);
   });
 
   it('should delete student', async () => {
     (repo.delete as jest.Mock).mockResolvedValue({ affected: 1 });
     await expect(service.remove('uuid-1')).resolves.toBeUndefined();
     expect(repo.delete).toHaveBeenCalledWith('uuid-1');
+  });
+
+  it('should throw if deleting non-existing student', async () => {
+    (repo.delete as jest.Mock).mockResolvedValue({ affected: 0 });
+    await expect(service.remove('missing-id')).rejects.toThrow(
+      NotFoundException,
+    );
   });
 });
