@@ -32,5 +32,43 @@ services:
     volumes:
       - ./apps/profile-service/liquibase:/workspace
 
+  address-service:
+    build:
+      context: ./apps/address-service
+      dockerfile: Dockerfile
+    container_name: syscode_address_service
+    environment:
+      PORT: "3001"
+      BASIC_AUTH_USERNAME: syscode
+      BASIC_AUTH_PASSWORD: syscode
+    ports:
+      - "3001:3001"
+
+  profile-service:
+    build:
+      context: ./apps/profile-service
+      dockerfile: Dockerfile
+    container_name: syscode_profile_service
+    depends_on:
+      postgres:
+        condition: service_healthy
+      liquibase:
+        condition: service_completed_successfully
+      address-service:
+        condition: service_started
+    environment:
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      DB_USER: syscode
+      DB_PASS: syscode
+      DB_NAME: syscode
+      TYPEORM_SYNC: "false"
+
+      ADDRESS_SERVICE_URL: http://address-service:3001
+      ADDRESS_SERVICE_USERNAME: syscode
+      ADDRESS_SERVICE_PASSWORD: syscode
+    ports:
+      - "3000:3000"
+
 volumes:
   syscode_pgdata:
