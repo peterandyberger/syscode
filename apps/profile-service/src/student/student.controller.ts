@@ -12,11 +12,15 @@ import { CreateStudentDto } from './dto/create_student.dto';
 import { UpdateStudentDto } from './dto/update_student.dto';
 import { StudentService } from './student.service';
 import { StudentEntity } from './student.entity';
+import { AddressClient } from '../address.client';
 
 @ApiTags('students')
 @Controller('students')
 export class StudentController {
-  constructor(private readonly studentService: StudentService) {}
+  constructor(
+    private readonly studentService: StudentService,
+    private readonly address: AddressClient,
+  ) {}
 
   @Get()
   async list(): Promise<StudentEntity[]> {
@@ -36,5 +40,17 @@ export class StudentController {
   @Delete(':id')
   async remove(@Param('id') id: string) {
     return this.studentService.remove(id);
+  }
+
+  @Get(':id/with-address')
+  async getWithAddress(@Param('id') id: string) {
+    const student = await this.studentService.getById(id);
+
+    try {
+      const addr = await this.address.get();
+      return { ...student, address: addr };
+    } catch {
+      return { ...student, address: null };
+    }
   }
 }
