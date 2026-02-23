@@ -14,7 +14,7 @@ import { AppService } from './app.service';
       password: process.env.DB_PASS ?? 'syscode',
       database: process.env.DB_NAME ?? 'syscode',
       autoLoadEntities: true,
-      synchronize: process.env.TYPEORM_SYNC === 'false',
+      synchronize: process.env.TYPEORM_SYNC === 'true',
     }),
     StudentModule,
   ],
