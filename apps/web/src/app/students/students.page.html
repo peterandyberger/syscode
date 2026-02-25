@@ -1,14 +1,63 @@
 <h1>Students</h1>
 
 <form [formGroup]="form" (ngSubmit)="submit()">
-  <input formControlName="name" placeholder="Name" data-testid="name"/>
-  <input formControlName="email" placeholder="Email" data-testid="email" />
-  <button type="submit" data-testid="create_button">Create</button>
+  <input formControlName="name" placeholder="Name" data-testid="student-name" />
+  <input formControlName="email" placeholder="Email" data-testid="student-email" />
+
+  <button type="submit" data-testid="student-save">
+    {{ editingId ? 'Save' : 'Create' }}
+  </button>
+
+  <button type="button" *ngIf="editingId" (click)="cancelEdit()">
+    Cancel
+  </button>
+
+  <div *ngIf="error" style="color:red; margin-top:8px;">
+    {{ error }}
+  </div>
 </form>
+
+<hr />
 
 <ul>
   <li *ngFor="let s of students">
-    {{ s.name }} ({{ s.email }})
-    <button (click)="delete(s.id)" data-testid="delete_button">x</button>
+    <div>
+      <strong>{{ s.name }}</strong>
+      ({{ s.email }})
+    </div>
+
+    <button (click)="startEdit(s)" [attr.data-testid]="'edit-' + s.id">
+      Edit
+    </button>
+
+    <button (click)="loadDetails(s.id)" [attr.data-testid]="'details-' + s.id">
+      Details
+    </button>
+
+    <button (click)="delete(s.id)" [attr.data-testid]="'delete-' + s.id">
+      Delete
+    </button>
+
+    <div *ngIf="details[s.id]" style="margin-top:6px;">
+      <div *ngIf="details[s.id].loading">Loading...</div>
+    
+      <div *ngIf="!details[s.id].loading">
+        <div *ngIf="details[s.id].address; else noAddr">
+          <span *ngIf="details[s.id].address?.address">
+            {{ details[s.id].address?.address }}
+          </span>
+
+          <span *ngIf="!details[s.id].address?.address">
+            {{ details[s.id].address }}
+          </span>
+        </div>
+    
+        <ng-template #noAddr>
+          Address not available
+        </ng-template>
+      </div>
+    </div>
+
+    <hr />
   </li>
-</ul>
+</ul> 
