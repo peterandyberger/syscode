@@ -70,5 +70,16 @@ services:
     ports:
       - "3000:3000"
 
+  web:
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile
+    container_name: syscode_web
+    depends_on:
+      profile-service:
+        condition: service_started
+    ports:
+      - "4200:4200"
+
 volumes:
   syscode_pgdata:

@@ -43,11 +43,11 @@
     
       <div *ngIf="!details[s.id].loading">
         <div *ngIf="details[s.id].address; else noAddr">
-          <span *ngIf="details[s.id].address.address">
-            {{ details[s.id].address.address }}
+          <span *ngIf="details[s.id].address?.address">
+            {{ details[s.id].address?.address }}
           </span>
-    
-          <span *ngIf="!details[s.id].address.address">
+
+          <span *ngIf="!details[s.id].address?.address">
             {{ details[s.id].address }}
           </span>
         </div>
