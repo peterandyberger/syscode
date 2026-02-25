@@ -1,0 +1,27 @@
+{
+  "name": "syscode UI tests",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test:e2e": "cucumber-js tests/features/**/*.feature -c ./tests/cucumber.config.json --format @cucumber/pretty-formatter",
+    "test:e2e:ui": "cucumber-js -c ./tests/cucumber.config.json --tags \"@ui and not @wip\" --format @cucumber/pretty-formatter",
+    "test:e2e:api": "cucumber-js -c ./tests/cucumber.config.json --tags \"@api and not @wip\" --format @cucumber/pretty-formatter",
+    "prepare": "husky"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@cucumber/cucumber": "^11.3.0",
+    "@cucumber/pretty-formatter": "^2.1.0",
+    "@playwright/test": "^1.55.0",
+    "@types/dotenv": "^6.1.1",
+    "cucumber-tsflow": "^4.5.2",
+    "dotenv": "^17.2.2",
+    "husky": "^9.1.7",
+    "playwright": "^1.55.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
+  }
+}
