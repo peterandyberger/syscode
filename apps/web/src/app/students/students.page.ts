@@ -1,4 +1,4 @@
-import { Component, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectorRef, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   ReactiveFormsModule,
@@ -7,8 +7,11 @@ import {
   Validators,
 } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { API_URL } from '../app.config';
 
 type Student = { id: string; name: string; email: string };
+type Address = { id: string; address: string };
+type StudentDetail = { loading: boolean; address: Address | null };
 
 @Component({
   standalone: true,
@@ -23,12 +26,13 @@ export class StudentsPage {
   editingId: string | null = null;
   error: string | null = null;
 
-  details: any = {};
+  details: Record<string, StudentDetail> = {};
 
   constructor(
     private fb: FormBuilder,
     private http: HttpClient,
     private detector: ChangeDetectorRef,
+    @Inject(API_URL) private apiUrl: string,
   ) {
     this.form = this.fb.group({
       name: ['', Validators.required],
@@ -39,16 +43,16 @@ export class StudentsPage {
   }
 
   load() {
-    this.http.get<Student[]>('http://localhost:3000/students').subscribe(
-      (data) => {
+    this.http.get<Student[]>(`${this.apiUrl}/students`).subscribe({
+      next: (data) => {
         this.students = data || [];
         this.detector.detectChanges();
       },
-      () => {
+      error: () => {
         this.error = 'Load failed';
         this.detector.detectChanges();
       },
-    );
+    });
   }
 
   submit() {
@@ -58,25 +62,25 @@ export class StudentsPage {
 
     if (this.editingId) {
       this.http
-        .put(`http://localhost:3000/students/${this.editingId}`, this.form.value)
-        .subscribe(
-          () => {
+        .put(`${this.apiUrl}/students/${this.editingId}`, this.form.value)
+        .subscribe({
+          next: () => {
             this.editingId = null;
             this.form.reset();
             this.load();
           },
-          () => (this.error = 'Save failed'),
-        );
+          error: () => (this.error = 'Save failed'),
+        });
     } else {
       this.http
-        .post('http://localhost:3000/students', this.form.value)
-        .subscribe(
-          () => {
+        .post(`${this.apiUrl}/students`, this.form.value)
+        .subscribe({
+          next: () => {
             this.form.reset();
             this.load();
           },
-          () => (this.error = 'Create failed'),
-        );
+          error: () => (this.error = 'Create failed'),
+        });
     }
   }
 
@@ -91,7 +95,7 @@ export class StudentsPage {
   }
 
   delete(id: string) {
-    this.http.delete(`http://localhost:3000/students/${id}`).subscribe(() => {
+    this.http.delete(`${this.apiUrl}/students/${id}`).subscribe(() => {
       this.load();
     });
   }
@@ -100,19 +104,19 @@ export class StudentsPage {
     this.details[id] = { loading: true, address: null };
 
     this.http
-      .get<any>(`http://localhost:3000/students/${id}/with-address`)
-      .subscribe(
-        (res) => {
+      .get<Student & { address: Address }>(`${this.apiUrl}/students/${id}/with-address`)
+      .subscribe({
+        next: (res) => {
           this.details[id] = {
             loading: false,
             address: res?.address || null,
           };
           this.detector.detectChanges();
         },
-        () => {
+        error: () => {
           this.details[id] = { loading: false, address: null };
           this.detector.detectChanges();
         },
-      );
+      });
   }
 }
