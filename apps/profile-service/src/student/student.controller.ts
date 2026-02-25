@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Logger,
   Param,
   Post,
   Put,
@@ -17,6 +18,8 @@ import { AddressClient } from '../address.client';
 @ApiTags('students')
 @Controller('students')
 export class StudentController {
+  private readonly logger = new Logger(StudentController.name);
+
   constructor(
     private readonly studentService: StudentService,
     private readonly address: AddressClient,
@@ -49,7 +52,8 @@ export class StudentController {
     try {
       const addr = await this.address.get();
       return { ...student, address: addr };
-    } catch {
+    } catch (err) {
+      this.logger.warn(`Address service unavailable for student [${id}]: ${err}`);
       return { ...student, address: null };
     }
   }

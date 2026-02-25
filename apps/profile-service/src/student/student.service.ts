@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { CreateStudentDto } from './dto/create_student.dto';
 import { UpdateStudentDto } from './dto/update_student.dto';
@@ -8,6 +8,8 @@ import { StudentEntity } from './student.entity';
 
 @Injectable()
 export class StudentService {
+  private readonly logger = new Logger(StudentService.name);
+
   constructor(
     @InjectRepository(StudentEntity)
     private readonly studentRepository: Repository<StudentEntity>,
@@ -24,7 +26,9 @@ export class StudentService {
       email: dto.email,
     });
 
-    return this.studentRepository.save(student);
+    const saved = await this.studentRepository.save(student);
+    this.logger.log(`Student created [${saved.id}]`);
+    return saved;
   }
 
   async update(id: string, dto: UpdateStudentDto): Promise<StudentEntity> {
@@ -46,6 +50,8 @@ export class StudentService {
     if (result.affected === 0) {
       throw new NotFoundException('Student not found');
     }
+
+    this.logger.log(`Student removed [${id}]`);
   }
 
   async getById(id: string): Promise<StudentEntity> {

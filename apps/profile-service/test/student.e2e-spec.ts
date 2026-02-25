@@ -1,6 +1,7 @@
 import { Test } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import request from 'supertest';
+import { DataSource } from 'typeorm';
 import { AppModule } from '../src/app.module';
 
 describe('Student API (e2e)', () => {
@@ -25,6 +26,7 @@ describe('Student API (e2e)', () => {
   });
 
   afterAll(async () => {
+    await app.get(DataSource).destroy();
     await app.close();
   });
 
