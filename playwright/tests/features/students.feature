@@ -32,6 +32,20 @@ Feature: Students
     Then the Cancel button is not visible
 
   @ui
+  Scenario: Invalid email shows error on submit
+    When I fill in "Test" and email "not-an-email"
+    And I submit the form
+    Then I see an email error
+
+  @ui
+  Scenario: Email error disappears when clicking into the email field
+    When I fill in "Test" and email "not-an-email"
+    And I submit the form
+    Then I see an email error
+    When I click the email field
+    Then I do not see an email error
+
+  @ui
   Scenario: View student address details
     Given a student "Detail Test" with email "detail@test.com" exists
     When I click Details for "Detail Test"

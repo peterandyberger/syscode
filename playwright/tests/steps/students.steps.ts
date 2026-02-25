@@ -96,6 +96,21 @@ Then("the Cancel button is not visible", async function (this: TestWorld) {
   await expect(ui.cancelButton).not.toBeVisible();
 });
 
+When("I click the email field", async function (this: TestWorld) {
+  const ui = new StudentsPage(this.page);
+  await ui.emailInput.click();
+});
+
+Then("I see an email error", async function (this: TestWorld) {
+  const ui = new StudentsPage(this.page);
+  await expect(ui.emailError).toBeVisible();
+});
+
+Then("I do not see an email error", async function (this: TestWorld) {
+  const ui = new StudentsPage(this.page);
+  await expect(ui.emailError).not.toBeVisible();
+});
+
 Then(
   "the address section for {string} loads",
   async function (this: TestWorld, name: string) {

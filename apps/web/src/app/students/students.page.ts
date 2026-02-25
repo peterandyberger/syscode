@@ -57,7 +57,10 @@ export class StudentsPage {
   }
 
   submit() {
-    if (this.form.invalid) return;
+    if (this.form.invalid) {
+      this.form.get('email')?.markAsTouched();
+      return;
+    }
 
     this.error = null;
 
@@ -70,7 +73,7 @@ export class StudentsPage {
             this.form.reset();
             this.load();
           },
-          error: (err) => { console.error('Failed to save student', err); this.error = 'Save failed'; },
+          error: (err) => { console.error('Failed to save student', err); this.error = 'Save failed'; this.detector.detectChanges(); },
         });
     } else {
       this.http
@@ -80,7 +83,7 @@ export class StudentsPage {
             this.form.reset();
             this.load();
           },
-          error: (err) => { console.error('Failed to create student', err); this.error = 'Create failed'; },
+          error: (err) => { console.error('Failed to create student', err); this.error = 'Create failed'; this.detector.detectChanges(); },
         });
     }
   }

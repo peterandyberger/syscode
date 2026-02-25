@@ -3,12 +3,14 @@ import { Page, Locator } from 'playwright';
 export class StudentsPage {
   readonly nameInput: Locator;
   readonly emailInput: Locator;
+  readonly emailError: Locator;
   readonly saveButton: Locator;
   readonly cancelButton: Locator;
 
   constructor(private page: Page) {
     this.nameInput = page.getByTestId('student-name');
     this.emailInput = page.getByTestId('student-email');
+    this.emailError = page.getByTestId('email-error');
     this.saveButton = page.getByTestId('student-save');
     this.cancelButton = page.getByTestId('student-cancel');
   }
