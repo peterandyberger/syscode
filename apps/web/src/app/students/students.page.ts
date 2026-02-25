@@ -48,7 +48,8 @@ export class StudentsPage {
         this.students = data || [];
         this.detector.detectChanges();
       },
-      error: () => {
+      error: (err) => {
+        console.error('Failed to load students', err);
         this.error = 'Load failed';
         this.detector.detectChanges();
       },
@@ -69,7 +70,7 @@ export class StudentsPage {
             this.form.reset();
             this.load();
           },
-          error: () => (this.error = 'Save failed'),
+          error: (err) => { console.error('Failed to save student', err); this.error = 'Save failed'; },
         });
     } else {
       this.http
@@ -79,7 +80,7 @@ export class StudentsPage {
             this.form.reset();
             this.load();
           },
-          error: () => (this.error = 'Create failed'),
+          error: (err) => { console.error('Failed to create student', err); this.error = 'Create failed'; },
         });
     }
   }
@@ -113,7 +114,8 @@ export class StudentsPage {
           };
           this.detector.detectChanges();
         },
-        error: () => {
+        error: (err) => {
+          console.error(`Failed to load details for student [${id}]`, err);
           this.details[id] = { loading: false, address: null };
           this.detector.detectChanges();
         },

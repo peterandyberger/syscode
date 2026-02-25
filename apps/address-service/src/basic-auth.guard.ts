@@ -2,6 +2,7 @@ import {
   CanActivate,
   ExecutionContext,
   Injectable,
+  Logger,
   UnauthorizedException,
 } from '@nestjs/common';
 
@@ -26,6 +27,8 @@ function extractCredentials(authHeader?: string) {
 
 @Injectable()
 export class BasicAuthGuard implements CanActivate {
+  private readonly logger = new Logger(BasicAuthGuard.name);
+
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest();
     const credentials = extractCredentials(request.headers?.authorization);
@@ -38,6 +41,7 @@ export class BasicAuthGuard implements CanActivate {
       credentials.username !== expectedUser ||
       credentials.password !== expectedPass
     ) {
+      this.logger.warn(`Unauthorized request from ${request.ip}`);
       throw new UnauthorizedException();
     }
 
