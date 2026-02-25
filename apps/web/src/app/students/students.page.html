@@ -8,7 +8,7 @@
     {{ editingId ? 'Save' : 'Create' }}
   </button>
 
-  <button type="button" *ngIf="editingId" (click)="cancelEdit()">
+  <button type="button" *ngIf="editingId" (click)="cancelEdit()" data-testid="student-cancel">
     Cancel
   </button>
 

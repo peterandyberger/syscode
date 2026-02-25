@@ -70,3 +70,36 @@ jobs:
           DB_NAME: syscode
           TYPEORM_SYNC: "false"
         run: npm run test:e2e
+
+  e2e-ui-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Start all services
+        run: docker compose up -d --build
+
+      - name: Wait for web
+        run: timeout 120 sh -c 'until curl -sf http://localhost:4200 > /dev/null; do sleep 3; done'
+
+      - name: Run UI e2e tests
+        working-directory: playwright
+        env:
+          FRONTEND_URL: http://localhost:4200
+          BACKEND_URL: http://localhost:3000
+        run: |
+          npm ci
+          npx playwright install chromium --with-deps
+          npm run test:e2e:ui
+          npm run test:e2e:api
+
+      - name: Upload reports on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-reports
+          path: playwright/reports/
