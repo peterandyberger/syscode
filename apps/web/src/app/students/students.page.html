@@ -2,7 +2,8 @@
 
 <form [formGroup]="form" (ngSubmit)="submit()">
   <input formControlName="name" placeholder="Name" data-testid="student-name" />
-  <input formControlName="email" placeholder="Email" data-testid="student-email" />
+  <input formControlName="email" placeholder="Email" data-testid="student-email" (focus)="form.get('email')?.markAsUntouched()" />
+  <div *ngIf="form.get('email')?.invalid && form.get('email')?.touched" data-testid="email-error" style="color:red;">Invalid email</div>
 
   <button type="submit" data-testid="student-save">
     {{ editingId ? 'Save' : 'Create' }}
